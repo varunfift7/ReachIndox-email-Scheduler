@@ -9,15 +9,15 @@ services:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 4000
+        value: "4000"
       - key: DB_HOST
-        value: db
+        value: postgres
       - key: DB_PORT
         value: "5432"
       - key: DB_USER
         value: email_scheduler
       - key: DB_PASSWORD
-        value: scheduler_password
+        sync: false
       - key: DB_NAME
         value: email_scheduler
       - key: REDIS_HOST
@@ -29,7 +29,7 @@ services:
       - key: SESSION_SECRET
         sync: false
       - key: FRONTEND_URL
-        value: https://your-frontend.onrender.com
+        sync: false
       - key: GOOGLE_CLIENT_ID
         sync: false
       - key: GOOGLE_CLIENT_SECRET
@@ -52,13 +52,13 @@ services:
       - key: NODE_ENV
         value: production
       - key: DB_HOST
-        value: db
+        value: postgres
       - key: DB_PORT
         value: "5432"
       - key: DB_USER
         value: email_scheduler
       - key: DB_PASSWORD
-        value: scheduler_password
+        sync: false
       - key: DB_NAME
         value: email_scheduler
       - key: REDIS_HOST
@@ -85,37 +85,36 @@ services:
     dockerContext: ./frontend
     envVars:
       - key: BACKEND_URL
-        value: https://your-backend.onrender.com
+        sync: false
     autoDeploy: true
 
-  - type: service
+  - type: private_service
     name: postgres
     env: docker
-    plan: free
-    dockerfilePath: ./docker/postgres/Dockerfile
-    dockerContext: .
+    plan: starter
+    image: postgres:15-alpine
     envVars:
       - key: POSTGRES_DB
         value: email_scheduler
       - key: POSTGRES_USER
         value: email_scheduler
       - key: POSTGRES_PASSWORD
-        value: scheduler_password
+        sync: false
     disk:
       name: postgres-data
       size: 1GB
       mountPath: /var/lib/postgresql/data
 
-  - type: service
+  - type: private_service
     name: redis
     env: docker
-    plan: free
+    plan: starter
     image: redis:7-alpine
 
-  - type: service
+  - type: private_service
     name: elasticsearch
     env: docker
-    plan: free
+    plan: starter
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     envVars:
       - key: discovery.type
@@ -124,9 +123,3 @@ services:
         value: "false"
       - key: ES_JAVA_OPTS
         value: "-Xms512m -Xmx512m"
-
-databases:
-  - name: email-scheduler-db
-    plan: free
-    databaseName: email_scheduler
-    user: email_scheduler
