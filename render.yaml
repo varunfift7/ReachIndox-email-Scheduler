@@ -90,7 +90,7 @@ services:
 
   - type: web
     name: postgres
-    env: docker
+    runtime: image
     plan: free
     image:
       url: postgres:15-alpine
@@ -101,14 +101,10 @@ services:
         value: email_scheduler
       - key: POSTGRES_PASSWORD
         sync: false
-    disk:
-      name: postgres-data
-      sizeGB: 1
-      mountPath: /var/lib/postgresql/data
 
   - type: web
     name: redis
-    env: docker
+    runtime: image
     plan: free
     image:
       url: redis:7-alpine
