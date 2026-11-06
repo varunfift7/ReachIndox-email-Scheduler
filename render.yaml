@@ -92,7 +92,8 @@ services:
     name: postgres
     env: docker
     plan: free
-    image: postgres:15-alpine
+    image:
+      url: postgres:15-alpine
     envVars:
       - key: POSTGRES_DB
         value: email_scheduler
@@ -102,11 +103,12 @@ services:
         sync: false
     disk:
       name: postgres-data
-      size: 1GB
+      sizeGB: 1
       mountPath: /var/lib/postgresql/data
 
   - type: web
     name: redis
     env: docker
     plan: free
-    image: redis:7-alpine
+    image:
+      url: redis:7-alpine
