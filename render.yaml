@@ -47,7 +47,7 @@ services:
     plan: free
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    dockerCommand: ["node", "dist/worker.js"]
+    dockerCommand: node dist/worker.js
     envVars:
       - key: NODE_ENV
         value: production
