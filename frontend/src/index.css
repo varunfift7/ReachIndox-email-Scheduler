@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #22c55e;
+  --primary-dark: #1aab50;
+  --primary-light: #f0fdf4;
+  --bg: #f8fafb;
+  --surface: #ffffff;
+  --surface-hover: #f1f5f9;
+  --border: #e5e7eb;
+  --text: #1a1a1a;
+  --text-muted: #6b7280;
+  --text-light: #9ca3af;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --sent-orange: #f97316;
+  --scheduled-green: #22c55e;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+input, select, textarea {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Login page */
+.login-page {
+  min-height: 100vh;
+  background: #e8f0fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-card {
+  background: #fff;
+  border: 1px solid #dce3ed;
+  border-radius: 1rem;
+  padding: 2.5rem 2rem 2rem;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.login-card h1 {
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-card .google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  background: #f7f8fa;
+  border: 1px solid #dce3ed;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.login-card .google-btn:hover {
+  background: #eef0f4;
+}
+
+.login-card .divider {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #999;
+  margin: 1.2rem 0;
+  position: relative;
+}
+
+.login-card .divider::before,
+.login-card .divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 30%;
+  height: 1px;
+  background: #e5e5e5;
+}
+
+.login-card .divider::before { left: 0; }
+.login-card .divider::after { right: 0; }
+
+.login-card .field {
+  margin-bottom: 0.75rem;
+}
+
+.login-card .field input {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  background: #f3f5f7;
+  border: 1px solid #e2e5ea;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  color: #1a1a1a;
+  outline: none;
+}
+
+.login-card .field input::placeholder { color: #b0b8c4; }
+.login-card .field input:focus { border-color: #22c55e; }
+
+.login-card .login-btn {
+  width: 100%;
+  padding: 0.7rem;
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.15s;
+}
+
+.login-card .login-btn:hover { background: #1aab50; }
+.login-card .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.login-card .demo-link {
+  display: block;
+  text-align: center;
+  margin-top: 0.9rem;
+  font-size: 0.78rem;
+  color: #999;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.login-card .demo-link:hover { color: #666; }

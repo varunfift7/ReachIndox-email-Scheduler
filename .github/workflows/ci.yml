@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: email_scheduler
+          POSTGRES_PASSWORD: scheduler_password
+          POSTGRES_DB: email_scheduler
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd "pg_isready -U email_scheduler -d email_scheduler"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+        env:
+          discovery.type: single-node
+          xpack.security.enabled: "false"
+        ports: ["9200:9200"]
+        options: >-
+          --health-cmd "curl -f http://localhost:9200/_cluster/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Backend install & build
+        run: |
+          cd backend
+          npm ci
+          npm run build
+
+      - name: Backend migrate
+        run: |
+          cd backend
+          npm run migrate
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5433
+          DB_USER: email_scheduler
+          DB_PASSWORD: scheduler_password
+          DB_NAME: email_scheduler
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          ELASTICSEARCH_URL: http://localhost:9200
+          SESSION_SECRET: test-secret
+          NODE_ENV: test
+
+      - name: Backend tests
+        run: |
+          cd backend
+          npm test
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5433
+          DB_USER: email_scheduler
+          DB_PASSWORD: scheduler_password
+          DB_NAME: email_scheduler
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          ELASTICSEARCH_URL: http://localhost:9200
+          SESSION_SECRET: test-secret
+          NODE_ENV: test
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Frontend install & build
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+      - name: Frontend lint
+        run: |
+          cd frontend
+          npm run lint
+
+      - name: Frontend tests
+        run: |
+          cd frontend
+          npm test
