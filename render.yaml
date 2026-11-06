@@ -1,0 +1,132 @@
+services:
+  - type: web
+    name: backend
+    env: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: DB_HOST
+        value: db
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_USER
+        value: email_scheduler
+      - key: DB_PASSWORD
+        value: scheduler_password
+      - key: DB_NAME
+        value: email_scheduler
+      - key: REDIS_HOST
+        value: redis
+      - key: REDIS_PORT
+        value: "6379"
+      - key: ELASTICSEARCH_URL
+        value: http://elasticsearch:9200
+      - key: SESSION_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        value: https://your-frontend.onrender.com
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: SLACK_CLIENT_ID
+        sync: false
+      - key: SLACK_CLIENT_SECRET
+        sync: false
+    healthCheckPath: /health
+    autoDeploy: true
+
+  - type: worker
+    name: backend-worker
+    env: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    dockerCommand: ["node", "dist/worker.js"]
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        value: db
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_USER
+        value: email_scheduler
+      - key: DB_PASSWORD
+        value: scheduler_password
+      - key: DB_NAME
+        value: email_scheduler
+      - key: REDIS_HOST
+        value: redis
+      - key: REDIS_PORT
+        value: "6379"
+      - key: ELASTICSEARCH_URL
+        value: http://elasticsearch:9200
+      - key: MAX_EMAILS_PER_HOUR
+        value: "200"
+      - key: MAX_EMAILS_PER_HOUR_PER_SENDER
+        value: "50"
+      - key: WORKER_CONCURRENCY
+        value: "5"
+      - key: MIN_DELAY_BETWEEN_EMAILS_MS
+        value: "2000"
+    autoDeploy: true
+
+  - type: web
+    name: frontend
+    env: docker
+    plan: free
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    envVars:
+      - key: BACKEND_URL
+        value: https://your-backend.onrender.com
+    autoDeploy: true
+
+  - type: service
+    name: postgres
+    env: docker
+    plan: free
+    dockerfilePath: ./docker/postgres/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: POSTGRES_DB
+        value: email_scheduler
+      - key: POSTGRES_USER
+        value: email_scheduler
+      - key: POSTGRES_PASSWORD
+        value: scheduler_password
+    disk:
+      name: postgres-data
+      size: 1GB
+      mountPath: /var/lib/postgresql/data
+
+  - type: service
+    name: redis
+    env: docker
+    plan: free
+    image: redis:7-alpine
+
+  - type: service
+    name: elasticsearch
+    env: docker
+    plan: free
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    envVars:
+      - key: discovery.type
+        value: single-node
+      - key: xpack.security.enabled
+        value: "false"
+      - key: ES_JAVA_OPTS
+        value: "-Xms512m -Xmx512m"
+
+databases:
+  - name: email-scheduler-db
+    plan: free
+    databaseName: email_scheduler
+    user: email_scheduler
