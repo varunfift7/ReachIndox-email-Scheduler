@@ -25,7 +25,7 @@ services:
       - key: REDIS_PORT
         value: "6379"
       - key: ELASTICSEARCH_URL
-        value: http://elasticsearch:9200
+        sync: false
       - key: SESSION_SECRET
         sync: false
       - key: FRONTEND_URL
@@ -66,7 +66,7 @@ services:
       - key: REDIS_PORT
         value: "6379"
       - key: ELASTICSEARCH_URL
-        value: http://elasticsearch:9200
+        sync: false
       - key: MAX_EMAILS_PER_HOUR
         value: "200"
       - key: MAX_EMAILS_PER_HOUR_PER_SENDER
@@ -88,10 +88,10 @@ services:
         sync: false
     autoDeploy: true
 
-  - type: private_service
+  - type: web
     name: postgres
     env: docker
-    plan: starter
+    plan: free
     image: postgres:15-alpine
     envVars:
       - key: POSTGRES_DB
@@ -105,21 +105,8 @@ services:
       size: 1GB
       mountPath: /var/lib/postgresql/data
 
-  - type: private_service
+  - type: web
     name: redis
     env: docker
-    plan: starter
+    plan: free
     image: redis:7-alpine
-
-  - type: private_service
-    name: elasticsearch
-    env: docker
-    plan: starter
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
-    envVars:
-      - key: discovery.type
-        value: single-node
-      - key: xpack.security.enabled
-        value: "false"
-      - key: ES_JAVA_OPTS
-        value: "-Xms512m -Xmx512m"
